@@ -21,7 +21,13 @@ soup = BeautifulSoup(data)
 
 #print soup.findAll(bgcolor="#666666")[1]
 
-print soup(bgcolor = "#666666")
+table1 = soup(bgcolor = "#666666")[0]
+
+for i in table1:
+    # drop empty elements
+    if len(i) > 1:
+        print i.contents[3].string
+
 
 #for i in soup.table.contents[3]:
     #print i
