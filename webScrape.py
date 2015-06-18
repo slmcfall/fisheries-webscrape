@@ -16,14 +16,19 @@ soup = BeautifulSoup(data)
 
 # get table title
 
-
-#get table cells
+# get table cells
 table1 = soup(bgcolor="#666666")[0]
+
+count = 0
+totals = len(table1) - 2
 
 for i in table1:
     # drop empty elements
-    if len(i) > 1:
+    if len(i) > 1 and count > 3 and count < totals:
         date = i.contents[1].string
         anglers = i.contents[3].string
+        wsKept = i.contents[5].string
 
-        print "{} {}".format(date,anglers)
+        print "{} {} {}".format(str(date), int(anglers), int(wsKept))
+
+    count += 1
