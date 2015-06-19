@@ -5,7 +5,10 @@ __author__ = 'smcfall'
 from bs4 import BeautifulSoup
 import requests
 import csv
+import arcpy
 
+arcpy.env.overwriteOutput = 1
+arcpy.env.workspace = "in_memory"
 
 url = "www.wdfw.wa.gov/fishing/creel/steelhead/"
 
@@ -18,7 +21,7 @@ soup = BeautifulSoup(data)
 # get table title
 
 # get table cells
-table1 = soup(bgcolor="#666666")[0]i9
+table1 = soup(bgcolor="#666666")[0]
 
 count = 0
 totals = len(table1) - 2
@@ -41,6 +44,16 @@ with open('boga.csv', 'wb') as csvfile:
             hrs = float(i.contents[13].string)
             comments = str(i.contents[15].string)
 
+            print date
             boga.writerow([riverName,date,anglers,wsKept,wsRel,hKept,hRel,hrs,comments])
         count += 1
 
+#
+# convert csv to dbf
+#
+
+input_csv = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\boga.csv"
+output_location = "C:\\Users\\Sean.McFall\\Documents\\SH"
+output_name = "boga_txt.dbf"
+
+arcpy.TableToTable_conversion(input_csv, output_location, output_name)
