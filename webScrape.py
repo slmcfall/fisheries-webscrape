@@ -21,6 +21,8 @@ soup = BeautifulSoup(data)
 riversDict = {"Bogachiel/Quillayute River": 0, "Calawah River": 1, "Sol Duc River": 2,
               "Lower Hoh River": 3, "Upper Hoh River": 4}
 
+file_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
+
 # get table cells
 
 for riverName, tableNum in riversDict.iteritems():
@@ -29,7 +31,7 @@ for riverName, tableNum in riversDict.iteritems():
 
     count = 0
     totals = len(table) - 2
-    csvName = riverName[:3] + ".csv"
+    csvName = file_path + riverName[:3] + ".csv"
 
     with open(csvName, 'wb') as csvfile:
         csvOut = csv.writer(csvfile, delimiter=',')
@@ -49,28 +51,22 @@ for riverName, tableNum in riversDict.iteritems():
                 comments = str(i.contents[15].string)
 
                 csvOut.writerow([riverName,date,anglers,wsKept,wsRel,hKept,hRel,hrs,comments])
+                # probably want to add these to the bar graph output too, here
+                # probably a list of lists would be suitable
             count += 1
+
+    dbf_table = dbf.from_csv(csvName, to_disk=True,
+                            filename= file_path + riverName[:3],
+                            field_names='RiverName Date NumOfAng wsKept wsRel hsKept hsRel HrsFished Comments'.split())
+
 
 #
 # convert csv to dbf
 #
 
-# 1. arcpy method
-
-# input_csv = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\boga.csv"
-# output_location = "C:\\Users\\Sean.McFall\\Documents\\SH"
-# output_name = "boga_txt.dbf"
-#
-# arcpy.TableToTable_conversion(input_csv, output_location, output_name)
-
-# 2. pythonic method
-
-dbf_table = dbf.from_csv('Cal.csv', to_disk=True, filename='CalNoHeaders', 
-    field_names='RiverName Date NumOfAng wsKept wsRel hsKept hsRel HrsFished Comments'.split())
-#dbf_table[0].delete_record()
-print dbf_table
-#
-#
+# dbf_table = dbf.from_csv(file_path + 'Cal.csv', to_disk=True,
+#                         filename= file_path + 'CalNoHeaders',
+#                         field_names='RiverName Date NumOfAng wsKept wsRel hsKept hsRel HrsFished Comments'.split())
 
 #
 # relate dbf to rivers layer
