@@ -11,7 +11,7 @@ res.next()
 
 date = []
 SH = []
-width = 0.2
+width = 0.8
 
 for col in res:
     date.append(col[1])
@@ -22,8 +22,10 @@ for col in res:
 #
 
 tbl_ln = np.arange(len(date))
+plt.figure(figsize=(15, 7))
+barplot = plt.bar(range(1,len(SH)+1),SH,width,color='r',align='center')
+labels = plt.xticks(range(1,len(SH)+1),date, rotation='vertical', ha='center')
+plt.grid(True)
 
-barplot = plt.bar(range(1,len(SH)+1),SH,width,color='r')
-#labels = plt.xticks(SH,date, rotation='vertical')
 
 plt.show()
