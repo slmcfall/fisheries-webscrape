@@ -2,3 +2,5 @@
 *.csv
 *.dbf
 *.lock
+/figures
+/tables
