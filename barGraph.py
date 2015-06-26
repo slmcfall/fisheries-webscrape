@@ -30,55 +30,28 @@ for col in res:
 width = 0.8
 x_axis = range(1,len(date)+1)
 bar_color = '#455A64'  # slate
+empty_list = ['']*len(date)
 
 # set size of the figure area
-fig = plt.figure(figsize=(15, 15))
+fig = plt.figure(figsize=(15, 10))
 fig.suptitle('Calawah River 2014/2015', fontsize=14, fontweight='bold')
 # position, attributes, title
 
-def makeBar(position, data, yaxis_title):
+def makeBar(position, data, x_labels, y_title):
     ax = fig.add_subplot(position)
-    ax.bar(x_axis,data,width,color=bar_color,align='center')
-    labels = plt.xticks(x_axis,date, rotation='vertical', ha='center')
+    ax.bar(x_axis,data,width, color=bar_color, align='center')
+    labels = plt.xticks(x_axis, x_labels, rotation='vertical', ha='center')
     plt.grid(True)
-    ax.set_ylabel(yaxis_title)
+    ax.set_ylabel(y_title)
     plt.xlim([0,len(x_axis)+1])
 
-num_ang_ax = makeBar(321,num_ang,'Number of Anglers')
-hrs_fished_ax = makeBar(322,hrs_fished,'Hours Fished')
-ws_kept_ax = makeBar(323,ws_kept,'Wild Steelhead Kept')
-ws_rel_ax = makeBar(324,ws_rel,'Wild Steelhead Released')
-h_kept_ax = makeBar(325,h_kept,'Hatchery Steelhead Kept')
-h_rel_ax = makeBar(326,h_rel,'Hatchery Steelhead Released')
-
-
-#
-# ax1 = fig.add_subplot(122)
-# ax1.bar(x_axis,num_ang,width,color=bar_color,align='center')
-# labels = plt.xticks(x_axis,date, rotation='vertical', ha='center')
-# plt.grid(True)
-# ax1.set_ylabel('Number of Anglers')
-# plt.xlim([0,len(x_axis)+1])
-#
-# ax2 = fig.add_subplot(121)
-# ax2.bar(x_axis,hrs_fished,width,color=bar_color,align='center')
-# labels = plt.xticks(x_axis,date, rotation='vertical', ha='center')
-# plt.grid(True)
-# ax2.set_ylabel('Hours Fished')
-#
-# plt.xlim([0,len(x_axis)+1])
-
-#barplot, barplot2 = plt.subplots()
-# a range of numbers vs the SH numbers
-#barplot = plt.bar(x_axis,num_ang,width,color=bar_color,align='center')
-#barplot2 = plt.bar(x_axis,hrs_fished,width,color=bar_color,align='center')
-
-# labels using the date list
-
-# eliminates white space after last data entry
-#plt.xlim([0,len(x_axis)+1])
-# adds in a nice dotted grid
-#plt.grid(True)
+# six plots
+num_ang_ax = makeBar(321,num_ang, empty_list,'Number of Anglers')
+hrs_fished_ax = makeBar(322,hrs_fished,empty_list,'Hours Fished')
+ws_kept_ax = makeBar(323,ws_kept,empty_list,'Wild Steelhead Kept')
+ws_rel_ax = makeBar(324,ws_rel,empty_list,'Wild Steelhead Released')
+h_kept_ax = makeBar(325,h_kept,date,'Hatchery Steelhead Kept')
+h_rel_ax = makeBar(326,h_rel,date,'Hatchery Steelhead Released')
 
 # gives the x-axis labels enough room
 fig.tight_layout()
