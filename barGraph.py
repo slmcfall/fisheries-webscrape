@@ -1,9 +1,13 @@
 # bar graphs for washington fisheries data
 
 import numpy as np
-import matplotlib.pyplot as plt
 import csv
+
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+
 from scipy.interpolate import spline
+from scipy.stats import norm
 
 #table_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
 #fig_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\figures\\"
@@ -52,24 +56,38 @@ def makeBar(position, data, x_labels, y_title, line_bf):
     plt.xlim([0,len(x_axis)+1])
 
     if line_bf == 1:
-        x_sm = np.array(x_axis)
-        y_sm = np.array(data)
 
-        x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
-        y_smooth = spline(x_sm, y_sm, x_smooth)
+        # best fit of data
+        (mu, sigma) = norm.fit(data)
 
-        # Define the matrix of 1x1 to place subplots
-        # Placing the plot1 on 1x1 matrix, at pos 1
-        # sp1 = fig.add_subplot(position, axisbg='w')
-        #sp1.plot(x, y, 'red', linewidth=2)
-        plt.plot(x_smooth, y_smooth, '#FF5252', linewidth=1)
+        # the histogram of the data
+        #bins = hist(datos, 60, normed=1, facecolor='green', alpha=0.75)
+
+        # add a 'best fit' line
+        deg = round(max(x_axis)/3)
+        # y = np.polyfit(x_axis, data, deg)
+        # l = plt.plot(x_axis, y, 'r--', linewidth=2)
+
+        coefficients = np.polyfit(x_axis, data, deg+1)
+        polynomial = np.poly1d(coefficients)
+        xs = np.linspace(min(data), max(data), 1000)
+        ys = polynomial(xs)
+        plt.plot(xs,ys)
+
+        # x_sm = np.array(x_axis)
+        # y_sm = np.array(data)
+
+        # x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
+        # y_smooth = spline(x_sm, y_sm, x_smooth)
+
+        # plt.plot(x_smooth, y_smooth, '#FF5252', linewidth=1)
     
     axes = plt.gca()
     axes.set_ylim(min(data),max(data))
 
 # six plots
 num_ang_ax = makeBar(321,num_ang, empty_list,'Number of Anglers',1)
-hrs_fished_ax = makeBar(322,hrs_fished,empty_list,'Hours Fished',0)
+hrs_fished_ax = makeBar(322,hrs_fished,empty_list,'Hours Fished',1)
 ws_kept_ax = makeBar(323,ws_kept,empty_list,'Wild Steelhead Kept',0)
 ws_rel_ax = makeBar(324,ws_rel,empty_list,'Wild Steelhead Released',0)
 h_kept_ax = makeBar(325,h_kept,date,'Hatchery Steelhead Kept',0)
