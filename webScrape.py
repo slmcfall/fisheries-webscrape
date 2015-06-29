@@ -1,6 +1,4 @@
-__author__ = 'smcfall'
-
-# simple script to mess with the bs4 library
+# webscrapes washington state fisheries data and outputs csv and dbfs of them
 
 from bs4 import BeautifulSoup
 import requests
