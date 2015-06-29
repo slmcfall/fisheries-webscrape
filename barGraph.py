@@ -5,8 +5,11 @@ import matplotlib.pyplot as plt
 import csv
 from scipy.interpolate import spline
 
-table_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
-fig_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\figures\\"
+#table_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
+#fig_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\figures\\"
+
+table_path = "/home/smcfall/Documents/fisheries-webscrape/tables/"
+fig_path = "/home/smcfall/Documents/fisheries-webscrape/figures/"
 
 # read the csv
 res = csv.reader(open(table_path + "Cal.csv"), delimiter = ',')
@@ -53,17 +56,19 @@ def makeBar(position, data, x_labels, y_title, line_bf):
         y_sm = np.array(data)
 
         x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
-        y_smooth = spline(x, y, x_smooth)
+        y_smooth = spline(x_sm, y_sm, x_smooth)
 
         # Define the matrix of 1x1 to place subplots
         # Placing the plot1 on 1x1 matrix, at pos 1
-        sp1 = canvas.add_subplot(position, axisbg='w')
+        # sp1 = fig.add_subplot(position, axisbg='w')
         #sp1.plot(x, y, 'red', linewidth=2)
-        sp1.plot(x_smooth, y_smooth, 'red', linewidth=1)
-
+        plt.plot(x_smooth, y_smooth, '#FF5252', linewidth=1)
+    
+    axes = plt.gca()
+    axes.set_ylim(min(data),max(data))
 
 # six plots
-num_ang_ax = makeBar(321,num_ang, empty_list,'Number of Anglers',0)
+num_ang_ax = makeBar(321,num_ang, empty_list,'Number of Anglers',1)
 hrs_fished_ax = makeBar(322,hrs_fished,empty_list,'Hours Fished',0)
 ws_kept_ax = makeBar(323,ws_kept,empty_list,'Wild Steelhead Kept',0)
 ws_rel_ax = makeBar(324,ws_rel,empty_list,'Wild Steelhead Released',0)

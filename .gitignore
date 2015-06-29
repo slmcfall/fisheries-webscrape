@@ -4,3 +4,4 @@
 *.lock
 /figures
 /tables
+*.swp

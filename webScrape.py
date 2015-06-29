@@ -19,8 +19,8 @@ soup = BeautifulSoup(data)
 riversDict = {"Bogachiel/Quillayute River": 0, "Calawah River": 1, "Sol Duc River": 2,
               "Lower Hoh River": 3, "Upper Hoh River": 4}
 
-file_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
-
+#file_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
+file_path = "tables/"
 # get table cells
 
 for riverName, tableNum in riversDict.iteritems():
