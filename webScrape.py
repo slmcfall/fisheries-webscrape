@@ -55,7 +55,7 @@ for riverName, tableNum in riversDict.iteritems():
 
     dbf_table = dbf.from_csv(csvName, to_disk=True,
                             filename= file_path + riverName[:3],
-                            field_names='RiverName Date NumOfAng wsKept wsRel hsKept hsRel HrsFished Comments'.split())
+                            field_names='RiverName Date NumOfAng WsKept WsRel HsKept HsRel HrsFished Comments'.split())
 
 
 #
