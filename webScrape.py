@@ -4,11 +4,12 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 import dbf
-#import arcpy
+import os
+import arcpy
 
 # set arcgis parameters
-#arcpy.env.overwriteOutput = 1
-#arcpy.env.workspace = "in_memory"
+arcpy.env.overwriteOutput = 1
+arcpy.env.workspace = "in_memory"
 
 # pull down html, make into soup object
 url = "www.wdfw.wa.gov/fishing/creel/steelhead/"
@@ -19,9 +20,9 @@ soup = BeautifulSoup(data)
 riversDict = {"Bogachiel/Quillayute River": 0, "Calawah River": 1, "Sol Duc River": 2,
               "Lower Hoh River": 3, "Upper Hoh River": 4}
 
-#file_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
-file_path = "tables/"
-# get table cells
+table_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\fisheries-webscrape\\tables\\"
+if not os.path.exists(table_path):
+    os.makedirs(table_path)
 
 for riverName, tableNum in riversDict.iteritems():
 
@@ -29,7 +30,7 @@ for riverName, tableNum in riversDict.iteritems():
 
     count = 0
     totals = len(table) - 2
-    csvName = file_path + riverName[:3] + ".csv"
+    csvName = table_path + riverName[:3] + ".csv"
 
     with open(csvName, 'wb') as csvfile:
         csvOut = csv.writer(csvfile, delimiter=',')
@@ -63,7 +64,7 @@ for riverName, tableNum in riversDict.iteritems():
                 else:
                     hrsPerHS = hrs / float(hsCaught)
 
-                
+
 
                 #csvOut.writerow([riverName,date,anglers,hrsPerFish,wsRel,hKept,hRel,hrs,comments])
                 csvOut.writerow([riverName,date,anglers,hrsPerWS,wsCaught,hrsPerHS,hsCaught,wsKept,wsRel,hKept,hRel,hrs,comments])
@@ -71,20 +72,12 @@ for riverName, tableNum in riversDict.iteritems():
                 # probably a list of lists would be suitable
             count += 1
 
+    # convert csv to dbf
     dbf_table = dbf.from_csv(csvName, to_disk=True,
-                            filename= file_path + riverName[:3],
+                            filename= table_path + riverName[:3],
                             field_names='RiverName Date NumOfAng hrsPerWS wsCaught hrsPerHS hsCaught wsKept wsRel hKept hRel HrsFished Comments'.split())
 
 
-#
-# convert csv to dbf
-#
-
-# dbf_table = dbf.from_csv(file_path + 'Cal.csv', to_disk=True,
-#                         filename= file_path + 'CalNoHeaders',
-#                         field_names='RiverName Date NumOfAng wsKept wsRel hsKept hsRel HrsFished Comments'.split())
-
-#
 # relate dbf to rivers layer
 #
 

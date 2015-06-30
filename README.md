@@ -1,7 +1,16 @@
 # Fisheries-Webscrape
 
-1. Webscrape western states publicly released fisheries data
-2. Format into .csv and .dbf files
-3. Output figures of data
+### Required libraries
+- numpy
+- os
+- dbf
+- csv
+- matplotlib
+- requests
+- BeautifulSoup
+- arcpy
 
-/Sean
+### What it does
+1. Collects publicly available fisheries data
+2. Formats into .csv and .dbf files
+3. Outputs fisheries data viz

@@ -5,11 +5,16 @@ import csv
 import os
 import matplotlib.pyplot as plt
 
-#table_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
-#fig_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\figures\\"
+## paths
+# windows
+table_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\fisheries-webscrape\\tables\\"
+fig_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\fisheries-webscrape\\figures\\"
+# linux
+#table_path = "/home/smcfall/Documents/fisheries-webscrape/tables/"
+#fig_path = "/home/smcfall/Documents/fisheries-webscrape/figures/"
 
-table_path = "/home/smcfall/Documents/fisheries-webscrape/tables/"
-fig_path = "/home/smcfall/Documents/fisheries-webscrape/figures/"
+if not os.path.exists(fig_path):
+    os.makedirs(fig_path)
 
 tables = os.listdir(table_path)
 
@@ -42,12 +47,12 @@ def makeBar(position, data, x_labels, y_title, fill_color, line_bf):
         ys = polynomial(xs)
 
         plt.plot(xs,ys)
-    
+
     axes = plt.gca()
     axes.set_ylim(min(data),max(data))
 
 def createFig(table_name):
-    global fig 
+    global fig
     global x_axis
     global width
     #open csv
@@ -83,7 +88,7 @@ def createFig(table_name):
     empty_list = ['']*len(date)
 
     # set size of the figure area
-    
+
     fig = plt.figure(figsize=(15, 10))
     title = river_name + '2014/2015'
     title.upper()
@@ -105,7 +110,7 @@ def createFig(table_name):
     #plt.show()
 
     # save the figure
-    plt.savefig(fig_path + table_name[:3] + 'png', bbox_inches='tight')
+    plt.savefig(fig_path + table_name[:3] + '.png', bbox_inches='tight')
 
 for table in tables:
     if table[-3:] == 'csv':
