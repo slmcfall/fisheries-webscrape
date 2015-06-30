@@ -1,15 +1,11 @@
 # bar graphs for washington fisheries data
 
 import numpy as np
-from numpy.polynomial import Chebyshev as T
 
 import csv
 
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
-
-from scipy.interpolate import spline
-from scipy.stats import norm
 
 #table_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
 #fig_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\figures\\"
@@ -23,17 +19,17 @@ res = csv.reader(open(table_path + "Cal.csv"), delimiter = ',')
 res.next()
 
 # ang = anglers, ws = wild steelhead, h = hatchery steelhed, rel = released
-date, num_ang, ws_kept, ws_rel, h_kept, h_rel, hrs_fished = [], [], [], [], [], [], []
+date, num_ang, hrsPerWS, wsCaught, hrsPerHS, hsCaught, hrs_fished = [], [], [], [], [], [], []
 
 # populate lists from csv
 for col in res:
     date.append(col[1])
     num_ang.append(int(col[2]))
-    ws_kept.append(int(col[3]))
-    ws_rel.append(int(col[4]))
-    h_kept.append(int(col[5]))
-    h_rel.append(int(col[6]))
-    hrs_fished.append(float(col[7]))
+    hrsPerWS.append(float(col[3]))
+    wsCaught.append(int(col[4]))
+    hrsPerHS.append(float(col[5]))
+    hsCaught.append(int(col[6]))
+    hrs_fished.append(float(col[11]))
 
 #
 # bar plot creation
@@ -51,6 +47,11 @@ title.upper()
 fig.suptitle(title.upper(), fontsize=16, fontweight='bold')
 # position, attributes, title
 
+def fit_poly_through_origin(x, y, n=1):
+    a = x[:, np.newaxis] ** np.arange(1, n+1)
+    coeff = np.linalg.lstsq(a, y)[0]
+    return np.concatenate(([0], coeff))
+
 def makeBar(position, data, x_labels, y_title, fill_color, line_bf):
     ax = fig.add_subplot(position)
     ax.bar(x_axis, data, width, color=fill_color, align='center')
@@ -62,36 +63,41 @@ def makeBar(position, data, x_labels, y_title, fill_color, line_bf):
 
     if line_bf == 1:
 
-        # best fit of data
-        (mu, sigma) = norm.fit(data)
+        c1 = fit_poly_through_origin(x_axis,data,2)
+        p1 = np.polynomial.Polynomial
+        xx = np.linspace(min(data),max(data),1000)
 
-        # the histogram of the data
-        #bins = hist(datos, 60, normed=1, facecolor='green', alpha=0.75)
+        plt.plot(xx,p1(xx))
 
-        # add a 'best fit' line
-        deg = round(max(x_axis)/3)
+        # # best fit of data
+        # (mu, sigma) = norm.fit(data)
 
-        if deg % 2 == 0:
-            deg += 1
+        # # the histogram of the data
+        # #bins = hist(datos, 60, normed=1, facecolor='green', alpha=0.75)
 
-        coefficients = np.polyfit(x_axis, data, deg)
-        print coefficients
-        polynomial = np.poly1d(coefficients)
-        xs = np.linspace(min(data), max(data), 1000)
-        ys = polynomial(xs)
+        # # add a 'best fit' line
+        # deg = round(max(x_axis)/3)
 
-        plt.plot(xs,ys)
+        # if deg % 2 == 0:
+        #     deg += 1
+
+        # coefficients = np.polyfit(x_axis, data, deg)
+        # polynomial = np.poly1d(coefficients)
+        # xs = np.linspace(min(data), max(data), 1000)
+        # ys = polynomial(xs)
+
+        # plt.plot(xs,ys)
     
     axes = plt.gca()
     axes.set_ylim(min(data),max(data))
 
 # six plots
-num_ang_ax = makeBar(321,num_ang, empty_list,'Number of Anglers',bar_color,1)
-hrs_fished_ax = makeBar(322,hrs_fished,empty_list,'Hours Fished',bar_color,1)
-ws_kept_ax = makeBar(323,ws_kept,empty_list,'Wild Steelhead Kept', '#FF5252',0)
-ws_rel_ax = makeBar(324,ws_rel,empty_list,'Wild Steelhead Released', '#FF5252',1)
-h_kept_ax = makeBar(325,h_kept,date,'Hatchery Steelhead Kept','#8bc34a',1)
-h_rel_ax = makeBar(326,h_rel,date,'Hatchery Steelhead Released','#8bc34a',1)
+num_ang_ax = makeBar(322,num_ang, empty_list,'Number of Anglers',bar_color,1)
+hrs_fished_ax = makeBar(321,hrs_fished,empty_list,'Hours Fished',bar_color,1)
+hrsPerWS_ax = makeBar(323,hrsPerWS,empty_list,'Hours Per \n Wild Steelhead','#FF5252',0)
+ws_caught_ax = makeBar(324,wsCaught,empty_list,'Wild Steelhead Caught','#FF5252',0)
+hrs_per_ws_ax = makeBar(325,hrsPerHS,date,'Hours Per \n Hatchery Steelhead','#8bc34a',0)
+hs_caught_ax = makeBar(326,hsCaught,date,'Hatchery Steelhead Caught','#8bc34a',0)
 
 # gives the x-axis labels enough room
 fig.tight_layout()
