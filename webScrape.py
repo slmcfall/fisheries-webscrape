@@ -20,6 +20,7 @@ soup = BeautifulSoup(data)
 riversDict = {"Bogachiel/Quillayute River": 0, "Calawah River": 1, "Sol Duc River": 2,
               "Lower Hoh River": 3, "Upper Hoh River": 4}
 
+gdb_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\rivers.gdb"
 table_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\fisheries-webscrape\\tables\\"
 if not os.path.exists(table_path):
     os.makedirs(table_path)
@@ -72,17 +73,9 @@ for riverName, tableNum in riversDict.iteritems():
                 # probably a list of lists would be suitable
             count += 1
 
-    # convert csv to dbf
-    dbf_table = dbf.from_csv(csvName, to_disk=True,
-                            filename= table_path + riverName[:3],
-                            field_names='RiverName Date NumOfAng hrsPerWS wsCaught hrsPerHS hsCaught wsKept wsRel hKept hRel HrsFished Comments'.split())
-
-    arcpy.TableToTable_conversion(in_rows=table_path + riverName[:3] + '.csv', out_path="C:\\Users\\Sean.McFall\\Documents\\SH\\rivers.gdb",
+    # import csv into gdb
+    arcpy.TableToTable_conversion(in_rows=table_path + riverName[:3] + '.csv', out_path=gdb_path,
                         out_name=riverName[:3])
-
-
-#
-# relate dbf to rivers layer
-#
-
-# arcpy.CreateRelationshipClass_management()
+                        
+    # relate dbf to rivers layer
+    # arcpy.CreateRelationshipClass_management()
