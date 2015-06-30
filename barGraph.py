@@ -1,11 +1,15 @@
 # bar graphs for washington fisheries data
 
 import numpy as np
+from numpy.polynomial import Chebyshev as T
 
 import csv
 
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
+
+from scipy.interpolate import spline
+from scipy.stats import norm
 
 #table_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\tables\\"
 #fig_path = "C:\\Users\\Sean.McFall\\PycharmProjects\\fisheries-webscrape\\figures\\"
@@ -63,30 +67,24 @@ def makeBar(position, data, x_labels, y_title, fill_color, line_bf):
 
     if line_bf == 1:
 
-        c1 = fit_poly_through_origin(x_axis,data,2)
-        p1 = np.polynomial.Polynomial
-        xx = np.linspace(min(data),max(data),1000)
+        # best fit of data
+        (mu, sigma) = norm.fit(data)
 
-        plt.plot(xx,p1(xx))
+        # the histogram of the data
+        #bins = hist(datos, 60, normed=1, facecolor='green', alpha=0.75)
 
-        # # best fit of data
-        # (mu, sigma) = norm.fit(data)
+        # add a 'best fit' line
+        deg = round(max(x_axis)/3)
 
-        # # the histogram of the data
-        # #bins = hist(datos, 60, normed=1, facecolor='green', alpha=0.75)
+        if deg % 2 == 0:
+            deg += 1
 
-        # # add a 'best fit' line
-        # deg = round(max(x_axis)/3)
+        coefficients = np.polyfit(x_axis, data, deg)
+        polynomial = np.poly1d(coefficients)
+        xs = np.linspace(min(data), max(data), 1000)
+        ys = polynomial(xs)
 
-        # if deg % 2 == 0:
-        #     deg += 1
-
-        # coefficients = np.polyfit(x_axis, data, deg)
-        # polynomial = np.poly1d(coefficients)
-        # xs = np.linspace(min(data), max(data), 1000)
-        # ys = polynomial(xs)
-
-        # plt.plot(xs,ys)
+        plt.plot(xs,ys)
     
     axes = plt.gca()
     axes.set_ylim(min(data),max(data))
