@@ -77,7 +77,11 @@ for riverName, tableNum in riversDict.iteritems():
                             filename= table_path + riverName[:3],
                             field_names='RiverName Date NumOfAng hrsPerWS wsCaught hrsPerHS hsCaught wsKept wsRel hKept hRel HrsFished Comments'.split())
 
+    arcpy.TableToTable_conversion(in_rows=table_path + riverName[:3] + '.csv', out_path="C:\\Users\\Sean.McFall\\Documents\\SH\\rivers.gdb",
+                        out_name=riverName[:3])
 
+
+#
 # relate dbf to rivers layer
 #
 
