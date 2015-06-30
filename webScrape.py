@@ -39,23 +39,41 @@ for riverName, tableNum in riversDict.iteritems():
         for i in table:
             # drop empty elements
             if len(i) > 1 and count > 3 and count < totals:
-                date = str(i.contents[1].string)
-                anglers = int(i.contents[3].string)
-                wsKept = int(i.contents[5].string)
-                wsRel = int(i.contents[7].string)
-                hKept = int(i.contents[9].string)
-                hRel = int(i.contents[11].string)
-                hrs = float(i.contents[13].string)
+
+                date     = str(i.contents[1].string)
+                anglers  = int(i.contents[3].string)
+                hrs      = float(i.contents[13].string)
                 comments = str(i.contents[15].string)
 
-                csvOut.writerow([riverName,date,anglers,wsKept,wsRel,hKept,hRel,hrs,comments])
+                # wild steelhead calculations
+                wsKept   = int(i.contents[5].string)
+                wsRel    = int(i.contents[7].string)
+                wsCaught = wsKept + wsRel
+                if hrs == 0 or wsCaught == 0:
+                    hrsPerWS = 0
+                else:
+                    hrsPerWS = hrs / float(wsCaught)
+
+                # hatchery steelhead calculations
+                hKept    = int(i.contents[9].string)
+                hRel     = int(i.contents[11].string)
+                hsCaught = hKept + hRel
+                if hrs == 0 or hsCaught == 0:
+                    hrsPerHS = 0
+                else:
+                    hrsPerHS = hrs / float(hsCaught)
+
+                
+
+                #csvOut.writerow([riverName,date,anglers,hrsPerFish,wsRel,hKept,hRel,hrs,comments])
+                csvOut.writerow([riverName,date,anglers,hrsPerWS,wsCaught,hrsPerHS,hsCaught,wsKept,wsRel,hKept,hRel,hrs,comments])
                 # probably want to add these to the bar graph output too, here
                 # probably a list of lists would be suitable
             count += 1
 
     dbf_table = dbf.from_csv(csvName, to_disk=True,
                             filename= file_path + riverName[:3],
-                            field_names='RiverName Date NumOfAng WsKept WsRel HsKept HsRel HrsFished Comments'.split())
+                            field_names='RiverName Date NumOfAng hrsPerWS wsCaught hrsPerHS hsCaught wsKept wsRel hKept hRel HrsFished Comments'.split())
 
 
 #
