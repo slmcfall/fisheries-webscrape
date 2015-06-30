@@ -8,7 +8,7 @@
 - matplotlib
 - requests
 - BeautifulSoup
-- arcpy
+- OPTIONAL: arcpy
 
 ### What it does
 1. Collects publicly available fisheries data
