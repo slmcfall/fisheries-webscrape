@@ -12,6 +12,7 @@ arcpy.env.overwriteOutput = 1
 arcpy.env.workspace = "in_memory"
 
 # pull down html, make into soup object
+print "--- Pulling down the data..."
 url = "www.wdfw.wa.gov/fishing/creel/steelhead/"
 r = requests.get("http://" + url)
 data = r.text
@@ -22,9 +23,12 @@ riversDict = {"Bogachiel/Quillayute River": 0, "Calawah River": 1, "Sol Duc Rive
 
 gdb_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\rivers.gdb"
 table_path = "C:\\Users\\Sean.McFall\\Documents\\SH\\fisheries-webscrape\\tables\\"
+
+# make table path if it doesn't exist already
 if not os.path.exists(table_path):
     os.makedirs(table_path)
 
+print "--- Creating tables..."
 for riverName, tableNum in riversDict.iteritems():
 
     table = soup(bgcolor="#666666")[tableNum]
@@ -35,8 +39,8 @@ for riverName, tableNum in riversDict.iteritems():
 
     with open(csvName, 'wb') as csvfile:
         csvOut = csv.writer(csvfile, delimiter=',')
-        #csvOut.writerow(["River Name", "Date", "Num of Anglers", "WS Kept", "WS Rel",
-                       #"HS Kept", "HS Rel", "Total Hours Fished", "Comments"])
+        csvOut.writerow(["River Name", "Date", "NumAnglers", "HrsPerWS", "wsCaught",
+                       "HrsPerHS", "hsCaught", "wsKept", "wsRel","hKept","hRel", "HrsFished", "Comments"])
 
         for i in table:
             # drop empty elements
@@ -65,17 +69,33 @@ for riverName, tableNum in riversDict.iteritems():
                 else:
                     hrsPerHS = hrs / float(hsCaught)
 
-
-
-                #csvOut.writerow([riverName,date,anglers,hrsPerFish,wsRel,hKept,hRel,hrs,comments])
+                # write data to csv
                 csvOut.writerow([riverName,date,anglers,hrsPerWS,wsCaught,hrsPerHS,hsCaught,wsKept,wsRel,hKept,hRel,hrs,comments])
-                # probably want to add these to the bar graph output too, here
-                # probably a list of lists would be suitable
+
             count += 1
 
-    # import csv into gdb
-    arcpy.TableToTable_conversion(in_rows=table_path + riverName[:3] + '.csv', out_path=gdb_path,
-                        out_name=riverName[:3])
-                        
-    # relate dbf to rivers layer
-    # arcpy.CreateRelationshipClass_management()
+# combine all csv's into one dbf
+print "--- Combining tables..."
+tables = os.listdir(table_path)
+
+waAll = table_path + 'WA_SH.csv'
+header = "RiverName,Date,NumAnglers,HrsPerWS,wsCaught,HrsPerHS,hsCaught,wsKept,wsRel,hKept,hRel,HrsFished,Comments\n"
+
+with open(waAll, 'wb') as csvAll:
+    csvAll.write(header)
+    for table in tables:
+        if table[-3:] == 'csv' and table != 'WA_SH.csv':
+            header = 0
+            for line in open(table_path + table):
+                if header != 0:
+                    csvAll.write(line)
+                else:
+                    header = 1
+
+print "--- Exporting to dbf..."
+# import csv into gdb
+arcpy.TableToTable_conversion(in_rows=table_path + 'WA_SH.csv', out_path=gdb_path,
+                    out_name='WA_SH')
+
+# relate dbf to rivers layer
+# arcpy.CreateRelationshipClass_management()

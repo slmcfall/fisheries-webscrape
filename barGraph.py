@@ -90,7 +90,7 @@ def createFig(table_name):
     # set size of the figure area
 
     fig = plt.figure(figsize=(15, 10))
-    title = river_name + '2014/2015'
+    title = river_name + ' 2014/2015'
     title.upper()
     fig.suptitle(title.upper(), fontsize=16, fontweight='bold')
     # position, attributes, title
@@ -110,7 +110,7 @@ def createFig(table_name):
     #plt.show()
 
     # save the figure
-    plt.savefig(fig_path + table_name[:3] + '.png', bbox_inches='tight')
+    plt.savefig(fig_path + table_name[:3], bbox_inches='tight')
 
 for table in tables:
     if table[-3:] == 'csv':
